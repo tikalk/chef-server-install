@@ -9,5 +9,7 @@ bootstrap() {
 	[[ $(id -u) -ne "0" ]] && (echo "$0 [Cant execute]: $USER doesnt have permissions, \
 	                      please re-run as root"; exit 1) || echo -e "User $USER /uid=$(id -u) validated, continuing ... \n"
 	[[ -f config ]] && ( . config; echo "Sourced ./config" ) || (set_default_conf)
+	[[ -f /etc/profile.d/rvm ]] && ( . /etc/profile.d/rvm; echo "Sourcing rvn environmet" )  || echo "rvm not present yet ..."
+
 }
 

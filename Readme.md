@@ -20,3 +20,5 @@ On the CentOS 6 [6.2 to be precise] installation chef-solr will not start -
 - rvm - For an awsome tool
 - rbel - For packaging all these rpms for both centos 5 & 6
 - "Someone on the net" - for a few OS related functions I am using which are totally awsome.
+
+See also :: Readme.md file in the directories for mor specific info

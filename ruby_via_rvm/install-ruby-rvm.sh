@@ -2,26 +2,37 @@
 
 . ../common.sh
 
-InstallRvm() {
-	echo "Installing latest stable rvm"
-	\curl -L https://get.rvm.io | sudo bash -s stable
-}
 
 InstallRubyDeps() {
-	if is_fedora; then
 	echo "installing ruby requirements"
-        for pkg in "gcc-c++ patch readline readline-devel zlib \
+	if is_fedora; then
+            for pkg in gcc-c++ patch readline readline-devel zlib \
 	            zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
-		    autoconf automake libtool bison"; do
+		    autoconf automake libtool bison; do
 		is_package_installed $pkg || install_package $pkg
-	done
+	    done
 	
 	#yum install -y gcc-c++ patch readline readline-devel zlib \
 	#zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
 	#autoconf automake libtool bison
 	elif is_ubuntu; then
+
+	  for pkg in build-essential bison openssl libreadline5 \
+		     libreadline-dev curl git-core zlib1g zlib1g-dev \
+		     libssl-dev vim libsqlite3-0 libsqlite3-dev sqlite3 \
+		     libreadline-dev libxml2-dev git-core subversion autoconf; do
+
+	    is_package_installed $pkg || install_package $pkg
+
+	  done
+
 		echo "Do ubutnu stuff ..."
 	fi
+}
+
+InstallRvm() {
+	echo "Installing latest stable rvm"
+	\curl -L https://get.rvm.io | sudo bash -s stable
 }
 
 InstallRuby() {
@@ -45,7 +56,7 @@ ValidateRuby() {
 
 BoootStrap
 SetDefaultConf
-InstallRvm
 InstallRubyDeps
+InstallRvm
 InstallRuby
 ValidateRuby

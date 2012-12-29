@@ -5,15 +5,19 @@ case "$1" in
         pushd ./ruby_via_rvm && ./install-ruby-rvm.sh; popd
         ;;
   chef_server_only)
-	pushd ./chef_server && ./install_chef_server.sh; popd
-	;;
-  usage)
-	echo $"Usage: $0 {ruby_only}"
-	exit 1
-	;;	
+        pushd ./chef_server && ./install_chef_server.sh; popd
+        ;;
+  all)
+        pushd ./ruby_via_rvm && ./install-ruby-rvm.sh; popd
+        pushd ./chef_server && ./install_chef_server.sh; popd
+        ;;
+  git)
+        . common.sh
+        gitStuff
+        ;;
   *)
-	pushd ./ruby_via_rvm && ./install-ruby-rvm.sh; popd
-	pushd ./chef_server && ./install_chef_server.sh; popd
-esac 
-
+        echo $"Usage: $0 {ruby_only | chef_server_only | all | <internal usage: git>}"
+        exit 1
+        ;;
+esac
 

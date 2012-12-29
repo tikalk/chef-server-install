@@ -275,4 +275,25 @@ AddRbelRepo() {
 
 }
 
+gitStuff() {
+
+        #Add common <to me> git aliases 
+        git config alias.st status
+        git config alias.ci commit
+        git config alias.br branch
+        git config alias.co checkout
+        git config alias.df diff
+        git config alias.lg 'log -p'
+
+        # Check local conifg - annoying to see commit on git hub with user@localhost ...
+        (git config --get user.email &>/dev/null || git config --get user.name &>/dev/null ) || \
+        (echo -e "Git config seems empty I would do the following:" 
+        echo -e "\t git config user.name \"Your username\"" 
+        echo -e "\t git config user.email youremail@exmaple.com \n")
+
+        # Show what you did ...
+        echo -e "This just addedd the following git aliases to your repository ::\n"
+        git config --get-regexp alias
+
+}
 

@@ -3,6 +3,11 @@ set -e
 
 SetDefaultConf() {
 	RUBY_VER='1.9.3'
+	
+# URLS
+aegisco_url='http://rpm.aegisco.com/aegisco/el5/aegisco.repo'
+
+
 }
 
 BoootStrap() {
@@ -247,4 +252,12 @@ AddEpelRepo() {
       fi	
    fi
 }
+
+AddAegiscoRepo() {
+ if [ ! -f /etc/yum.repos.d/aegisco.repo ]; then
+   \curl --silent --output /etc/yum.repos.d/aegisco.repo $aegisco_url
+ fi
+ return $?
+}
+
 

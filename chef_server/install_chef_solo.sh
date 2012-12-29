@@ -42,6 +42,13 @@ if is_fedora; then
  AddEpelRepo
  is_package_installed gcc44 || install_package gcc44
  is_package_installed 'gcc44-c++' || install_package 'gcc44-c++'
+
+ echo "Adding gecode-devel as workaround for COOK-528 see: http://tickets.opscode.com/browse/COOK-528"
+ AddAegiscoRepo
+ is_package_installed gecode-devel || yum -y install gecode-devel
+ [[ -L /usr/local/lib/libgecodekernel.so ]] && rm -f /usr/local/lib/libgecodekernel.so
+ test -L /usr/lib64/libgecodekernel.so || ln -s /usr/lib64/libgecodekernel.so /usr/local/lib/libgecodekernel.so
+ 
  export CXX=`which g++44`
  export CC=`which gcc44`
  chef-solo -c /etc/chef/solo.rb -j ./chef$OS.json -r ${BOOTSTRAP_URL}

@@ -31,7 +31,7 @@ if is_fedora; then
 
   is_package_installed rubygem-chef-server || install_package rubygem-chef-server
   test -f /usr/sbin/setup-chef-server.sh && rm -f `/usr/sbin/setup-chef-server.sh`
-  is_package_installed rubygem-chef-server && ./setup-chef-server.sh 
+  is_package_installed rubygem-chef-server && ./rbel-chef-post-install.sh 
   if [ "$?" = "0" ]; then 
 	 if [[ "$os_RELEASE" =~ "5.*" ]]; then
     	   echo "login to http://your-chef-server:4040 user: admin password: p@ssw0rd1"

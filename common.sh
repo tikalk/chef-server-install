@@ -11,8 +11,15 @@ aegisco_url='http://rpm.aegisco.com/aegisco/el5/aegisco.repo'
 }
 
 BoootStrap() {
-	[[ $(id -u) -ne "0" ]] && (echo "$0 [Cant execute]: $USER doesnt have permissions, \
-	                      please re-run as root"; exit 1) || echo -e "User $USER /uid=$(id -u) validated, continuing ... \n"
+
+	if [ $(id -u) -ne "0" ]; then 
+	  echo "$0 [Can't execute]: $USER doesnt have permissions, \
+	     please re-run as root" 
+	  exit 1 
+	else
+	 echo -e "User $USER /uid=$(id -u) validated, continuing ... \n"
+	fi
+
 	[[ -f config ]] && ( . config; echo "Sourced ./config" ) || (SetDefaultConf)
 	[[ -f /etc/profile.d/rvm.sh ]] && ( . /etc/profile.d/rvm.sh; echo "Sourcing rvm environmet" )  || (echo "rvm not present yet ...")
 

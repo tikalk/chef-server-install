@@ -14,7 +14,7 @@ BoootStrap() {
 	[[ $(id -u) -ne "0" ]] && (echo "$0 [Cant execute]: $USER doesnt have permissions, \
 	                      please re-run as root"; exit 1) || echo -e "User $USER /uid=$(id -u) validated, continuing ... \n"
 	[[ -f config ]] && ( . config; echo "Sourced ./config" ) || (SetDefaultConf)
-	[[ -f /etc/profile.d/rvm.sh ]] && ( . /etc/profile.d/rvm.sh; echo "Sourcing rvn environmet" )  || (echo "rvm not present yet ...")
+	[[ -f /etc/profile.d/rvm.sh ]] && ( . /etc/profile.d/rvm.sh; echo "Sourcing rvm environmet" )  || (echo "rvm not present yet ...")
 
 }
 
@@ -237,7 +237,7 @@ AddEpelRepo() {
 	if [[ "$os_RELEASE" =~ "5.*" ]]; then
 	   epel_rpm_url="http://dl.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
 
-	elif [[ "$os_RELEASE" =~ "6.*" ]]; then
+	elif [[ "$os_RELEASE" = "6" ]]; then
 	   epel_rpm_url="http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
         fi 
 	epel_rpm=`echo $epel_rpm_url | cut -d "/" -f 8`
@@ -260,4 +260,16 @@ AddAegiscoRepo() {
  return $?
 }
 
+AddRbelRepo() {
+
+    if is_fedora; then
+        if [[ "$os_RELEASE" =~ "5.*" ]]; then
+           rbel_rpm_url='http://rbel.frameos.org/rbel5'
+
+        elif [[ "$os_RELEASE" = "6" ]]; then
+           rbel_rpm_url='http://rbel.frameos.org/rbel6'
+        fi
+    fi
+    rpm -Uvh $rbel_rpm_url
+}
 

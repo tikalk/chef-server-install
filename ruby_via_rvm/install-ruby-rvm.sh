@@ -14,7 +14,7 @@ InstallRubyDeps() {
 	zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
 	autoconf automake libtool bison
 	elif is_ubuntu; then
-
+		echo "Do ubutnu stuff ..."
 	fi
 }
 

@@ -14,7 +14,8 @@ BoootStrap() {
 
 	if [ $(id -u) -ne "0" ]; then 
 	  echo "$0 [Can't execute]: $USER doesnt have permissions, \
-	     please re-run as root" 
+	     please re-run as root"
+	  [[ is_ubuntu ]] && echo -e "\nsudo -i should do the trick :)\n"
 	  exit 1 
 	else
 	 echo -e "User $USER /uid=$(id -u) validated, continuing ... \n"
@@ -281,6 +282,20 @@ AddRbelRepo() {
     fi
 
 }
+
+AddOpsCodeRepo() {
+	[[ ! -f /etc/apt/sources.list.d/opscode.list ]] && (echo "deb http://apt.opscode.com/ `lsb_release -cs`-0.10 main" | sudo tee /etc/apt/sources.list.d/opscode.list) 
+
+	if [ ! -f /etc/apt/trusted.gpg.d/opscode-keyring.gpg ]; then
+	  mkdir -p /etc/apt/trusted.gpg.d
+	  gpg --keyserver keys.gnupg.net --recv-keys 83EF826A
+	  gpg --export packages@opscode.com | sudo tee /etc/apt/trusted.gpg.d/opscode-keyring.gpg > /dev/null
+	fi
+}
+
+
+
+
 
 gitStuff() {
 

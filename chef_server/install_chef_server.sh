@@ -1,11 +1,6 @@
 #!/bin/bash
 
 . ../common.sh
-BOOTSTRAP_URL='http://s3.amazonaws.com/chef-solo/BoootStrap-latest.tar.gz'
-#BOOTSTRAP_URL='http://wiki.opscode.com/download/attachments/18645206/bootstrap-2012.06.26-epel-6-7.tar.gz?version=1&modificationDate=1340731435000'
-BoootStrap
-SetDefaultConf
-GetOSVersion
 
 InstallChef(){
  . /etc/profile.d/rvm.sh
@@ -31,38 +26,27 @@ EOF
 KickoffChefServer() {
 
 if is_fedora; then 
- echo "The following action were desined for CentOS"
-# echo "See: http://wiki.opscode.com/display/chef/Installing+Chef+Server+using+Chef+Solo#InstallingChefServerusingChefSolo-CentOS/RHELInstallationNotes for more details"
-
-# echo "Disabeling selinux"
-# lokkit --selinux=disabled # TBD find another method than lokkit ...
-
-# echo "Stopping Iptables"
-# service iptables stop
-
-# AddEpelRepo
-# if [[ "$os_RELEASE" =~ "5.*" ]]; then 
-#  is_package_installed gcc44 || install_package gcc44
-#  is_package_installed 'gcc44-c++' || install_package 'gcc44-c++'
-#  export CXX=`which g++44`
-#  export CC=`which gcc44`
-# fi
-
-# echo "Adding gecode-devel as workaround for COOK-528 see: http://tickets.opscode.com/browse/COOK-528"
-# AddAegiscoRepo
-# is_package_installed gecode-devel || yum -y install gecode-devel
-# [[ -L /usr/local/lib/libgecodekernel.so ]] && rm -f /usr/local/lib/libgecodekernel.so
-# test -L /usr/lib64/libgecodekernel.so || ln -s /usr/lib64/libgecodekernel.so /usr/local/lib/libgecodekernel.so
- 
-# chef-solo -c /etc/chef/solo.rb -j ./chef$OS.json -r ${BOOTSTRAP_URL}
+ echo "The following action were designed for CentOS"
   AddRbelRepo
-  is_package_installed rubygem-chef-server || install_package rubygem-chef-server
-  is_package_installed rubygem-chef-server && setup-chef-server.sh 
 
+  is_package_installed rubygem-chef-server || install_package rubygem-chef-server
+  test -f /usr/sbin/setup-chef-server.sh && rm -f `/usr/sbin/setup-chef-server.sh`
+  is_package_installed rubygem-chef-server && ./setup-chef-server.sh 
+  if [ "$?" = "0" ]; then 
+	 if [[ "$os_RELEASE" =~ "5.*" ]]; then
+    	   echo "login to http://your-chef-server:4040 user: admin password: p@ssw0rd1"
+    	   echo "Please note: this is the default passowrd change it !!!"
+          elif [[ "$os_RELEASE" = "6" ]]; then
+    	   echo "login to http://your-chef-server:4040 user: admin password: chef321go"
+    	   echo "Please note: this passowrd was set by rbel repository change it !!!"
+         fi
+  fi
 fi
 }
 
-
+BoootStrap
+SetDefaultConf
+GetOSVersion
 InstallChef
 GenSoloConf
 KickoffChefServer

@@ -269,7 +269,10 @@ AddRbelRepo() {
         elif [[ "$os_RELEASE" = "6" ]]; then
            rbel_rpm_url='http://rbel.frameos.org/rbel6'
         fi
+        rbel_rpm=`echo $rbel_rpm_url | cut -d "/" -f 4`
+        is_package_installed $rbel_rpm-release || rpm -Uvh $rbel_rpm_url
     fi
-    rpm -Uvh $rbel_rpm_url
+
 }
+
 

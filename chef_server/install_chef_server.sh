@@ -10,23 +10,10 @@ InstallChef(){
  [[ $? -eq '' ]] && echo "chef gem version: $gem_ver_avail already installed continuing ..." || gem install chef
 }
 
-GenSoloConf(){
-
- test -d /etc/chef/ || mkdir -v /etc/chef/
- if [ -d /etc/chef/ ]; then
- [[ -f /etc/chef/solo.rb ]] && rm -f /etc/chef/solo.rb
-cat >> /etc/chef/solo.rb << EOF
-file_cache_path "/tmp/chef-solo"
-cookbook_path "/tmp/chef-solo/cookbooks"
-EOF
- fi
-}
-
-
 KickoffChefServer() {
 
 if is_fedora; then 
- echo "The following action were designed for CentOS"
+  echo "The following action were designed for CentOS"
   AddRbelRepo
 
   is_package_installed rubygem-chef-server || install_package rubygem-chef-server
@@ -42,11 +29,18 @@ if is_fedora; then
          fi
   fi
 fi
+
+if is_ubuntu; then
+ AddOpsCodeRepo
+ for pkg in opscode-keyring chef chef-server; do
+  install_package $pkg
+ done
+fi
 }
 
 BoootStrap
 SetDefaultConf
 GetOSVersion
 InstallChef
-GenSoloConf
+#GenSoloConf
 KickoffChefServer

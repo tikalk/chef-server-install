@@ -10,9 +10,15 @@ InstallRvm() {
 InstallRubyDeps() {
 	if is_fedora; then
 	echo "installing ruby requirements"
-	yum install -y gcc-c++ patch readline readline-devel zlib \
-	zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
-	autoconf automake libtool bison
+        for pkg in "gcc-c++ patch readline readline-devel zlib \
+	            zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
+		    autoconf automake libtool bison"; do
+		is_package_installed $pkg || install_package $pkg
+	done
+	
+	#yum install -y gcc-c++ patch readline readline-devel zlib \
+	#zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
+	#autoconf automake libtool bison
 	elif is_ubuntu; then
 		echo "Do ubutnu stuff ..."
 	fi

@@ -2,19 +2,23 @@
 
 . ../common.sh
 
-install_rvm() {
+InstallRvm() {
 	echo "Installing latest stable rvm"
 	\curl -L https://get.rvm.io | sudo bash -s stable
 }
 
-install_ruby_deps() {
+InstallRubyDeps() {
+	if is_fedora; then
 	echo "installing ruby requirements"
 	yum install -y gcc-c++ patch readline readline-devel zlib \
 	zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
 	autoconf automake libtool bison
+	elif is_ubuntu; then
+
+	fi
 }
 
-install_ruby() {
+InstallRuby() {
 	echo "Setting ~/.gemrc defaults to --no-ri --no-rdoc"
 	echo 'gem: --no-ri --no-rdoc' > ~/.gemrc
 	. /etc/profile.d/rvm.sh
@@ -25,7 +29,7 @@ install_ruby() {
 }
 
 
-validate_ruby() {
+ValidateRuby() {
 	. /etc/profile.d/rvm.sh
 	rvm use ${RUBY_VER} --default &>/dev/null
 	which ruby | grep rubies &>/dev/null || (echo "missing ruby in /usr/local/rvm/rubies/... " ; exit 2)
@@ -33,9 +37,9 @@ validate_ruby() {
 	gem -v &>/dev/null && echo -e "Found rubygems `gem -v` found\n" || (echo "Couldn't find rubygems exiting" ; exit 2)
 }
 
-bootstrap
-set_default_conf
-install_rvm
-install_ruby_deps
-install_ruby
-validate_ruby
+BoootStrap
+SetDefaultConf
+InstallRvm
+InstallRubyDeps
+InstallRuby
+ValidateRuby

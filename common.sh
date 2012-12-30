@@ -1,14 +1,34 @@
-#!/bin/bash
+#!/bin/bash -x
 set -e
 
 SetDefaultConf() {
-	RUBY_VER='1.9.3'
-	
+echo "This function was called if no config file was present in project root dir"
+
+export RUBY_VER='1.9.3'
+export VIRTUAL_BOX_VER='4.2'
 # URLS
-aegisco_url='http://rpm.aegisco.com/aegisco/el5/aegisco.repo'
-
-
+export aegisco_url='http://rpm.aegisco.com/aegisco/el5/aegisco.repo'
 }
+
+ParseProps() {
+
+        [[ "$1" != ""  ]] && local PROP_FILE=$1
+        [[ -f $PROP_FILE ]] && (echo "Parsing  $PROP_FILE") || (echo "Property file not found: $PROP_FILE")
+
+        while read line; do
+          echo "$line" | grep "^#" >/dev/null
+          if [ $? -ne 0 ] && echo $line |grep "=" 1>/dev/null ; then
+            key=`echo $line |cut -f1 -d=`
+            val=`grep "^$key=" $PROP_FILE`
+            echo "$key" | grep [/.] > /dev/null
+            if [ "$?" -ne "0" ] ; then
+              export $val
+              echo $val
+            fi
+          fi
+        done  < $PROP_FILE
+}
+
 
 BoootStrap() {
 
@@ -21,7 +41,6 @@ BoootStrap() {
 	 echo -e "User $USER /uid=$(id -u) validated, continuing ... \n"
 	fi
 
-	[[ -f config ]] && ( . config; echo "Sourced ./config" ) || (SetDefaultConf)
 	[[ -f /etc/profile.d/rvm.sh ]] && ( . /etc/profile.d/rvm.sh; echo "Sourcing rvm environmet" )  || (echo "rvm not present yet ...")
 
 }
@@ -293,7 +312,27 @@ AddOpsCodeRepo() {
 	fi
 }
 
+AddVirtualBoxRepo() {
 
+if is_fedora; then
+   [[ ! -f /etc/yum.repos.d/virtualbox.repo  ]] && wget http://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo
+elif is_ubuntu; then
+   cat /etc/apt/sources.list | grep virtualbox
+   if [ "$? " != "0" ]; then
+     if [ `lsb_release -cs` = "precise" ] || [ `lsb_release -cs` =  "oneiric" ] || \
+        [ `lsb_release -cs` =  "natty" ] ||  [ `lsb_release -cs` = "wheezy" ]   || [ `lsb_release -cs` = "quantal" ] ; then
+          non_free='contrib'
+     else
+        non_free='contrib non-free'
+     fi
+     [[ ! -f /etc/apt/sources.list.d/virtualbox.list ]] && (echo "deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` $non_free" | sudo tee /etc/apt/sources.list.d/virtualbox.list )
+     wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
+   else
+     echo "Looks like virtualbox repo is in yout source.list" `cat /etc/apt/sources.list | grep virtualbox`
+   fi
+
+fi
+}
 
 
 
@@ -317,5 +356,23 @@ gitStuff() {
         echo -e "This just addedd the following git aliases to your repository ::\n"
         git config --get-regexp alias
 
+}
+
+
+WhereAmI_old() { 
+SCRIPT_NAME="${0##*/}"
+SCRIPT_DIR="${0%/*}"
+
+# if the script was started from the base directory, then the 
+# expansion returns a period
+if test "$SCRIPT_DIR" == "." ; then
+  SCRIPT_DIR="$PWD"
+# if the script was not called with an absolute path, then we need to add the 
+# current working directory to the relative path of the script
+elif test "${SCRIPT_DIR:0:1}" != "/" ; then
+  SCRIPT_DIR="$PWD/$SCRIPT_DIR"
+fi
+echo SCRIPT_NAME :: $SCRIPT_NAME
+echo SCRIPT_DIR :: $SCRIPT_DIR
 }
 

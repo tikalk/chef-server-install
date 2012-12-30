@@ -1,7 +1,7 @@
 #!/bin/bash
 
 . ../common.sh
-
+[[ -f ../config ]] && (ParseProps ../config) || (SetDefaultConf)
 
 InstallRubyDeps() {
 	echo "installing ruby requirements"
@@ -54,9 +54,19 @@ ValidateRuby() {
 	gem -v &>/dev/null && echo -e "Found rubygems `gem -v` found\n" || (echo "Couldn't find rubygems exiting" ; exit 2)
 }
 
+InstallVargrant() {
+	. /etc/profile.d/rvm.sh
+	gem install vagrant
+
+	echo "What's Vagrant with out VirtualBox ?? "
+	AddVirtualBoxRepo
+	install_package VirtualBox-$VIRTUAL_BOX_VER
+}
+
 BoootStrap
-SetDefaultConf
 InstallRubyDeps
 InstallRvm
 InstallRuby
 ValidateRuby
+is_set VargrantInstall 
+[[ "$?" -eq "0" ]] && InstallVargrant

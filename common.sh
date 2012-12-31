@@ -234,7 +234,7 @@ function is_package_installed() {
     fi
 
     if [[ "$os_PACKAGE" = "deb" ]]; then
-        dpkg -l "$@" > /dev/null
+        dpkg -l | grep "$@" > /dev/null
         return $?
     elif [[ "$os_PACKAGE" = "rpm" ]]; then
         rpm --quiet -q "$@"
@@ -326,7 +326,7 @@ elif is_ubuntu; then
         non_free='contrib non-free'
      fi
      [[ ! -f /etc/apt/sources.list.d/virtualbox.list ]] && (echo "deb http://download.virtualbox.org/virtualbox/debian `lsb_release -cs` $non_free" | sudo tee /etc/apt/sources.list.d/virtualbox.list )
-     wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
+     wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add - &>/dev/null
    else
      echo "Looks like virtualbox repo is in yout source.list" `cat /etc/apt/sources.list | grep virtualbox`
    fi

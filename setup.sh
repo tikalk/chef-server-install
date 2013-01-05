@@ -3,11 +3,11 @@
 . common.sh
 
 __ruby_only() {
-        pushd ./ruby_via_rvm && ./install-ruby-rvm.sh; popd &>/dev/null
+        pushd ./ruby_via_rvm &>/dev/null && ./install-ruby-rvm.sh; popd &>/dev/null
 }
 
 __chef_server() {
-        pushd ./chef_server && ./install_chef_server.sh; popd &>/dev/null
+        pushd ./chef_server &>/dev/null && ./install_chef_server.sh; popd &>/dev/null
 }
 
 __usage() {
@@ -32,28 +32,30 @@ Actions
 "
 }
 
-case "$1" in
-  ruby)
-	__ruby_only
-        ;;
-  chef_server)
-	__chef_server
-        ;;
-  all)
-	__ruby_only
-	__chef_server
-        ;;
-  git)
-        gitStuff
-        ;;
-  vagrant)
-        export VargrantInstall=true	
-	__ruby_only
-	;;
-  help|*)
-        __usage
-        exit 1
-        ;;
-esac
-
+while [[ $# -gt 0 ]] ; do
+  arg="$1" ; shift
+  case "$arg" in
+    ruby)
+	  __ruby_only
+          ;;
+    chef_server)
+	  __chef_server
+          ;;
+    all)
+	  __ruby_only
+  	  __chef_server
+          ;;
+    git)
+          gitStuff
+          ;;
+    vagrant)
+          export VargrantInstall=true	
+	  __ruby_only
+  	  ;;
+    help|*)
+          __usage
+          exit 1
+          ;;
+  esac
+done
 

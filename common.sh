@@ -1,9 +1,9 @@
-#!/bin/bash -x
+#!/bin/bash
+
 set -e
 
 SetDefaultConf() {
 echo "This function was called if no config file was present in project root dir"
-
 export RUBY_VER='1.9.3'
 export VIRTUAL_BOX_VER='4.2'
 # URLS
@@ -23,7 +23,6 @@ ParseProps() {
             echo "$key" | grep [/.] > /dev/null
             if [ "$?" -ne "0" ] ; then
               export $val
-              echo $val
             fi
           fi
         done  < $PROP_FILE
@@ -33,16 +32,27 @@ ParseProps() {
 BoootStrap() {
 
 	if [ $(id -u) -ne "0" ]; then 
-	  echo "$0 [Can't execute]: $USER doesnt have permissions, \
-	     please re-run as root"
-	  [[ is_ubuntu ]] && echo -e "\nsudo -i should do the trick :)\n"
+	  echo "$0 [Can't execute]: $USER doesnt have permissions, please re-run as root"
+	  [[ is_ubuntu ]] && echo -e "sudo -i / sudo ./setup.sh <switch>, should do the trick :)\n"
 	  exit 1 
-	else
-	 echo -e "User $USER /uid=$(id -u) validated, continuing ... \n"
 	fi
 
-	[[ -f /etc/profile.d/rvm.sh ]] && ( . /etc/profile.d/rvm.sh; echo "Sourcing rvm environmet" )  || (echo "rvm not present yet ...")
+	if [ -f /etc/profile.d/rvm.sh ]; then 
+		. /etc/profile.d/rvm.sh; 
+		echo "*** rvm already installed ***" 
+		
+		export RVM_AVAIL="true"
 
+	printf "
+##############################################
+# if you wish to remove rvm :
+# execute : 
+# \trvm implode
+# \t<sudo> rm -f /etc/profiled.d/rvm.sh ~/.rvm
+# Then rerun this script
+##############################################\n"
+		
+	fi
 }
 
 GetOSVersion() {
@@ -234,7 +244,7 @@ function is_package_installed() {
     fi
 
     if [[ "$os_PACKAGE" = "deb" ]]; then
-        dpkg -l | grep "$@" > /dev/null
+        dpkg -l "$@" | grep ii > /dev/null
         return $?
     elif [[ "$os_PACKAGE" = "rpm" ]]; then
         rpm --quiet -q "$@"
@@ -358,21 +368,11 @@ gitStuff() {
 
 }
 
+#
+# Print Message
+#
+print_cm() {
+echo "printing in color"
 
-WhereAmI_old() { 
-SCRIPT_NAME="${0##*/}"
-SCRIPT_DIR="${0%/*}"
 
-# if the script was started from the base directory, then the 
-# expansion returns a period
-if test "$SCRIPT_DIR" == "." ; then
-  SCRIPT_DIR="$PWD"
-# if the script was not called with an absolute path, then we need to add the 
-# current working directory to the relative path of the script
-elif test "${SCRIPT_DIR:0:1}" != "/" ; then
-  SCRIPT_DIR="$PWD/$SCRIPT_DIR"
-fi
-echo SCRIPT_NAME :: $SCRIPT_NAME
-echo SCRIPT_DIR :: $SCRIPT_DIR
 }
-

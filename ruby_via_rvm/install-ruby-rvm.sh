@@ -11,9 +11,6 @@ InstallRubyDeps() {
 		is_package_installed $pkg || install_package $pkg
 	    done
 	
-	#yum install -y gcc-c++ patch readline readline-devel zlib \
-	#zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
-	#autoconf automake libtool bison
 	elif is_ubuntu; then
 
 	  for pkg in curl build-essential bison openssl libreadline5 \
@@ -36,7 +33,6 @@ InstallRvm() {
 InstallRuby() {
 	echo "Setting ~/.gemrc defaults to --no-ri --no-rdoc"
 	echo 'gem: --no-ri --no-rdoc' > ~/.gemrc
-	. /etc/profile.d/rvm.sh
 	echo "Installing ruby ${RUBY_VER} via rvm"
 	echo RUBY_VER ::  ${RUBY_VER}
 	$rvm_path/bin/rvm install ${RUBY_VER}
@@ -65,7 +61,6 @@ InstallVargrant() {
 }
 
 BoootStrap
-
 if [ "$RVM_AVAIL" != "true" ]; then 
  InstallRubyDeps 
  InstallRvm
